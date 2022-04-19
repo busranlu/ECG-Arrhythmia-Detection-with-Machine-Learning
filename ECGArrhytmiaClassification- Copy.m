@@ -1,4 +1,4 @@
-%% PREPROCESSİNG
+%% PREPROCESSING
 %to correct the baseline and remove unwanted high frequency noise. 
 % A Butterworth high-pass filter (with a cutoff frequency νc = 0.5 Hz) and 
 % a finite impulse response filter of 12th order (35 Hz, at 3-dB point) are used
