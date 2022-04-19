@@ -1,11 +1,4 @@
 %% PREPROCESSİNG
-%sinyal değişimi
-l=length(val);
-data=zeros(l,1);
-for i=1:l
-    data(i,1)=val(1,i);
-end
-
 %to correct the baseline and remove unwanted high frequency noise. 
 % A Butterworth high-pass filter (with a cutoff frequency νc = 0.5 Hz) and 
 % a finite impulse response filter of 12th order (35 Hz, at 3-dB point) are used
@@ -13,7 +6,7 @@ fs=360;                           %örnekleme frekansı
 Ws=2*pi*fs;                       %W olarak örnekleme frekansı
 Ts= 1/fs;                         %periyot
 
-%sinyalin ekrana çizdirilmesi
+%plotting signal
 % time = (0:length(data)-1)/fs; 
 % plot(time,data); title('ECG Signal');
 % xlabel('Time (Seconds)')
@@ -53,7 +46,10 @@ Ts= 1/fs;                         %periyot
 % subplot(2,2,4);
 % plot(notchOut);
 
-%% R WAVE FINDING
+
+
+
+%% R WAVE FINDING (Pan and Tompkins)
 %lowpass filter
 N1=5;
 fc3=12;
@@ -83,7 +79,7 @@ hp=filtfilt(b5,a5,lp);
 % plot(hp)
 
 
-%sinyalin türevinin alınması
+%derivation
 der = diff(hp,3);
 
 
@@ -110,7 +106,7 @@ end
 mwin = movmean(sqr,40);
 
 
-% R lerin bulunması için threshold belirleme
+% thresholding 
 maxValue = 0;
 maxIndex = 0;
 temp=zeros(500,1);
@@ -139,7 +135,7 @@ noiselvl = maxValue2;
 threshold = (noiselvl + 0.2 * signallvl);
 threshold=threshold-0.001;
 
-% %other threshold finding way-- not used
+% %other threshold finding way-- (not used)
 % tem = zeros(580,1); 
 % for j = 1:580
 %     tem(j,1) = mwin(j,1);
@@ -169,7 +165,7 @@ threshold=threshold-0.001;
 % yline(threshold);
 
 
-%% thresholdu geçen yerleri bulmak için threshold üzerindeki verilere 1 atama
+%% Assign 1 to data above threshold to find places that pass threshold
 onesZeros=zeros(length(mwin),1);
 for i = 1:length(mwin)
     if (mwin(i,1) >= threshold)
@@ -177,7 +173,7 @@ for i = 1:length(mwin)
     end
 end
 
-%ecg sinyalinde threshold geçen yerlerin samplelarını belirleme
+% Determining the samples of the places where threshold passes in the ecg signal
 ones=zeros(length(mwin),1);
 boolen = true;
 p = 1;
@@ -206,13 +202,13 @@ end
     end
 end
 
-%kontrol için ekrana çizdirme
+%plotting signal for controling
 % plot(time(data),one(data), 'o');
 % plot(time,d03,time(one),d03(one),'rv','MarkerFaceColor','r'); grid on
 %     xlabel('Time'); ylabel('Voltage');
 %     title('Find Prominent Peaks');
 
-%% Thresholdu geçen yerelere atanan 1lerin belirli aralığında ana sinyalde Rleri arama
+%% Finding R points on mother signal
 a=length(one);
 rValueArray = zeros(a,1);
 rIndexArray = zeros(a,1);
@@ -250,7 +246,7 @@ for i = 1:length(one)
 end
   
 
-%ekrana bütün basamakların çizdirilmesi
+%plotting signals
 subplot(2,2,1);
 plot(der);
 
@@ -267,7 +263,7 @@ plot(data,'-p','MarkerIndices',rIndexArray,...
     'MarkerFaceColor','red',...
     'MarkerSize',9);
 
-%% Q bulma algortiması
+%% Finding Q waves
 q1Index = 0;
 q2Index = 0;
 interval1=55;
@@ -338,7 +334,7 @@ end
 %     'MarkerFaceColor','green',...
 %     'MarkerSize',5);
 
-%% S bulma algortiması
+%% Finding S waves
 q3Index = 0;
 q4Index = 0;
 interval3=55;
@@ -405,7 +401,7 @@ for z=1:length(rIndexArray)
      
 end
 
-%ekrana Q,R,ve S noktalarının ana sinyalde çizdirilmesi
+%Pointed Q,R,S Points
  hold on
 plot(data,'-o','MarkerIndices',sPointIndex,...
     'MarkerFaceColor','blue',...
@@ -418,7 +414,7 @@ plot(data,'-p','MarkerIndices',rIndexArray,...
     'MarkerSize',9);
 hold off
 
-%% Baseline Filtering, baseline filtrelenmiş sinyal üstünde Q,R,S noktalarının gösterilmesi
+%% Baseline Filtering, Pointed Q,R,S Points on baseli filtered signal
 %Highpass filter design
 
 N=5;                %filtre derecesi
@@ -445,8 +441,8 @@ plot(data2,'-p','MarkerIndices',rIndexArray,...
     'MarkerSize',9);
 hold off
 
-%% Feature çıkarılması aşamasına geçilmesi
-%y ekseninin normalize edilmesi, R amplitude değerlerinin bulunması için
+%% Feature extraction
+%For finding R amplitude, normalising amplitude values
 
 maxPoint=max(data2);
 data3=zeros(length(data2),1);
@@ -454,26 +450,26 @@ for i=1:length(data2)
     data3(i,1)=data2(i,1)/maxPoint;
 end
 
-%% R dalgaları arasındaki intervali bulmak için R indexlerinin saniyeye çevirilmesi
+%% For finding RR interval, convert number of samples to second
 rTime=zeros(length(rIndexArray),1);
 for i=1:length(rIndexArray)
     rTime(i,1)=rIndexArray(i,1)/360;
 end
 
-%% R Amplitude Finding (sn)
+%% R Amplitude Finding 
 rAmplitude=zeros(length(rIndexArray),1);
 for i=1:length(rIndexArray)
     initial=rIndexArray(i,1);
     rAmplitude(i,1)=data3(initial,1);
 end
 
-%% QRS Wide Finding (sn)
+%% QRS Wide Finding (sec)
 qrsInterval=zeros(length(rIndexArray),1);
 for i=1:length(qPointIndex)
 qrsInterval(i,1)=(sPointIndex(i,1)-qPointIndex(i,1))/360;
 end
 
-%% RR Interval Finding (sn)
+%% RR Interval Finding (sec)
 rrIntervals=zeros(length(rIndexArray)-1,1);
 for i=1:(length(rIndexArray)-1)
     rrIntervals(i,1)=rTime(i+1,1)-rTime(i,1);
