@@ -11,3 +11,10 @@ Model Training outputs are given below:
 
 ![9nisan_modelçiktilar](https://user-images.githubusercontent.com/47025526/164173926-41dc2cc7-4635-417f-a438-a53197b002ac.PNG)
 ![9nisan_modelçiktilar2](https://user-images.githubusercontent.com/47025526/164173951-b2aef90f-2c95-4ebc-8f73-f2cb0f882460.PNG)
+
+
+
+Testing results are given below:
+
+![image](https://user-images.githubusercontent.com/47025526/164175534-40829e38-97d7-439b-8ed2-b0402727a7e8.png)
+
