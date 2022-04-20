@@ -6,3 +6,4 @@ In this project, the aim is detecting PVC beats and Normal beats from ECG record
 
 
 In Feature matris, There are 3 data parts. There are ''all datas, traning data and test data''. There are also 6 columns (R amplitude,QRS width,RR interval, Gender,age,arrhytmia type). Age and gender are not used as a feature. 
+
