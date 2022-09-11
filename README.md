@@ -5,7 +5,7 @@ In this project, the aim is detecting PVC beats and Normal beats from ECG record
 
 
 In 'Feature_matris2.xlsx', there are 3 data file ("all datas(includes training and test data), traning data and test data")
-In Feature matris, there are 6 columns(5 dimention-features and 1 label) (R amplitude,QRS width,RR interval,gender,age and arrhytmia type). Age and gender are not used as a feature. 
+In Feature matrix, there are 6 columns(5 dimention-features and 1 label) (R amplitude,QRS width,RR interval,gender,age and arrhytmia type). Age and gender are not used as a feature. 
 
 Model Training outputs from MATLAB Classification Learner Outputs are given below:
 
